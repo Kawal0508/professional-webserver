@@ -1,25 +1,35 @@
-Write-Host "�� Professional Web Server Demo" -ForegroundColor Green
+Write-Host "🚀 Professional Web Server Demo" -ForegroundColor Green
 Write-Host "===============================" -ForegroundColor Green
 Write-Host "Repository: https://github.com/Kawal0508/professional-webserver" -ForegroundColor Cyan
 
 Write-Host "`n1. Starting optimized web server..." -ForegroundColor Yellow
-Start-Process python -ArgumentList "webserver.py", "-r", "object_dir", "-p", "8080", "-c", "config.json" -WindowStyle Minimized
+Write-Host "   Starting server in background..." -ForegroundColor Cyan
+
+# Start server in background
+$serverJob = Start-Job -ScriptBlock {
+    Set-Location "E:\Iowa State University 2025 - 2027\Spring 2025\COMS 5880 - Computer Networks\Programming Assignment 2"
+    python webserver.py -r object_dir -p 8080 -c config.json
+}
 
 Write-Host "   Waiting for server to start..." -ForegroundColor Cyan
-Start-Sleep -Seconds 3
+Start-Sleep -Seconds 5
 
-Write-Host "`n2. Testing health endpoint..." -ForegroundColor Yellow
+# Check if server is running
+Write-Host "`n2. Checking if server is running..." -ForegroundColor Yellow
 try {
-    $health = Invoke-WebRequest -Uri "http://localhost:8080/health" -UseBasicParsing
+    $health = Invoke-WebRequest -Uri "http://localhost:8080/health" -UseBasicParsing -TimeoutSec 10
     Write-Host "   ✅ Health check passed: $($health.StatusCode)" -ForegroundColor Green
     $healthData = $health.Content | ConvertFrom-Json
     Write-Host "   Server uptime: $([math]::Round($healthData.uptime, 2)) seconds" -ForegroundColor Green
 } catch {
-    Write-Host "   ❌ Health check failed" -ForegroundColor Red
+    Write-Host "   ❌ Health check failed - Server not running" -ForegroundColor Red
+    Write-Host "   Please start the server manually:" -ForegroundColor Yellow
+    Write-Host "   python webserver.py -r object_dir -p 8080 -c config.json" -ForegroundColor Cyan
+    exit 1
 }
 
 Write-Host "`n3. Running performance test..." -ForegroundColor Yellow
-python load_test.py -r 500 -t 25 http://localhost:8080
+python load_test.py -r 100 -t 10 http://localhost:8080
 
 Write-Host "`n4. Getting server metrics..." -ForegroundColor Yellow
 try {
@@ -47,5 +57,6 @@ Write-Host "Press any key to stop the server..." -ForegroundColor Yellow
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
 # Stop the server
-Get-Process python | Where-Object {$_.MainWindowTitle -like "*webserver*"} | Stop-Process
+Stop-Job $serverJob
+Remove-Job $serverJob
 Write-Host "`nServer stopped." -ForegroundColor Yellow
