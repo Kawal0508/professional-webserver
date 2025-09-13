@@ -1,0 +1,141 @@
+⚙️ CONFIGURATION FILE EXPLANATION (config.json)
+===============================================
+
+📝 WHAT IS A CONFIGURATION FILE?
+=================================
+Think of it like the settings menu in a video game or app. Instead of changing code every time you want to modify how the server works, you just change this file!
+
+It's like having a control panel for your web server.
+
+🔧 WHAT DOES EACH SECTION DO?
+=============================
+
+1. SERVER SETTINGS
+   {
+     "server": {
+       "host": "0.0.0.0",           ← What address to listen on (0.0.0.0 = all addresses)
+       "port": 8080,                ← What port number to use (like a door number)
+       "max_connections": 100,      ← How many people can connect at once
+       "timeout": 30,               ← How long to wait before giving up (seconds)
+       "thread_pool_size": 10       ← How many workers to have ready
+     }
+   }
+
+   SIMPLE EXPLANATION:
+   - host: Like choosing which door of your house to answer
+   - port: Like a specific door number (8080 is like apartment 8080)
+   - max_connections: Like having 100 chairs in your restaurant
+   - timeout: If someone takes too long, move on to the next person
+   - thread_pool_size: Like having 10 waiters ready to serve
+
+2. SECURITY SETTINGS
+   {
+     "security": {
+       "rate_limit": 100,                    ← How many requests per minute per person
+       "max_file_size": 10485760,           ← Biggest file allowed (10MB)
+       "allowed_methods": ["GET", "HEAD", "POST"],  ← What actions are allowed
+       "cors_enabled": true,                ← Allow websites to talk to each other
+       "cors_origins": ["*"]                ← Which websites can talk to yours
+     }
+   }
+
+   SIMPLE EXPLANATION:
+   - rate_limit: Like saying "you can only ask for 100 things per minute"
+   - max_file_size: Like saying "no files bigger than 10MB"
+   - allowed_methods: Like saying "you can only GET, HEAD, or POST"
+   - cors_enabled: Like allowing other websites to visit yours
+   - cors_origins: Like saying "any website can visit" (* means all)
+
+3. LOGGING SETTINGS
+   {
+     "logging": {
+       "level": "INFO",                     ← How much detail to record
+       "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",  ← How to format logs
+       "file": "webserver.log"              ← Where to save the log file
+     }
+   }
+
+   SIMPLE EXPLANATION:
+   - level: Like choosing how much detail to write in a diary
+     * DEBUG = everything (very detailed)
+     * INFO = important things (normal)
+     * WARNING = problems (less detail)
+     * ERROR = only errors (minimal)
+   - format: Like choosing how to write dates and times
+   - file: Like choosing which notebook to write in
+
+4. CACHE SETTINGS
+   {
+     "cache": {
+       "enabled": true,                     ← Turn caching on/off
+       "max_size": 1000,                   ← How many files to keep in memory
+       "ttl": 3600                         ← How long to keep files (seconds)
+     }
+   }
+
+   SIMPLE EXPLANATION:
+   - enabled: Like turning on/off a fast storage closet
+   - max_size: Like saying "keep only 1000 items in the fast storage"
+   - ttl: Like saying "throw away items after 1 hour" (3600 seconds = 1 hour)
+
+5. SSL SETTINGS
+   {
+     "ssl": {
+       "enabled": false,                   ← Turn HTTPS on/off
+       "cert_file": null,                  ← Path to security certificate
+       "key_file": null                    ← Path to security key
+     }
+   }
+
+   SIMPLE EXPLANATION:
+   - enabled: Like turning on/off the security lock
+   - cert_file: Like having a security certificate (like an ID card)
+   - key_file: Like having a security key (like a password)
+
+💡 WHY USE A CONFIGURATION FILE?
+=================================
+
+BEFORE (Hard-coded settings):
+- To change port from 8080 to 9000, you had to edit the code
+- To change security settings, you had to edit the code
+- Every change required programming knowledge
+- Risk of breaking the code
+
+AFTER (Configuration file):
+- Change port from 8080 to 9000? Just edit the JSON file!
+- Change security settings? Just edit the JSON file!
+- No programming knowledge needed
+- Can't break the code by changing settings
+
+🎯 REAL-WORLD EXAMPLE:
+======================
+
+DEVELOPMENT (testing):
+- port: 8080
+- rate_limit: 50
+- logging: DEBUG
+- ssl: false
+
+PRODUCTION (live website):
+- port: 443
+- rate_limit: 1000
+- logging: INFO
+- ssl: true
+
+Same code, different settings! Just change the config file!
+
+🔧 HOW TO USE IT:
+=================
+
+1. Edit the config.json file with any text editor
+2. Change the values you want
+3. Restart the server
+4. New settings take effect immediately!
+
+EXAMPLE CHANGES:
+- Want more security? Increase rate_limit
+- Want faster responses? Enable caching
+- Want to see more details? Change logging level to DEBUG
+- Want HTTPS? Enable SSL and add certificate files
+
+This makes your server flexible and professional!

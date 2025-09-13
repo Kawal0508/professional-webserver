@@ -1,0 +1,8 @@
+# Core dependencies
+asyncio
+concurrent-futures
+
+# Optional dependencies for enhanced features
+pytest>=7.0.0
+pytest-cov>=4.0.0
+requests>=2.28.0

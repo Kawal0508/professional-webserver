@@ -1,0 +1,205 @@
+🐳 DOCKER COMPOSE EXPLAINED (docker-compose.yml)
+===============================================
+
+📝 WHAT IS DOCKER COMPOSE?
+==========================
+Think of Docker Compose like a conductor of an orchestra!
+
+REAL WORLD ANALOGY:
+- Individual Docker containers = individual musicians
+- Docker Compose = conductor who coordinates all musicians
+- The result = beautiful symphony (complete application)
+
+Docker Compose lets you run multiple containers together and make them work as a team!
+
+🔧 WHAT DOES OUR DOCKER-COMPOSE.YML DO?
+=======================================
+
+It creates a complete web server stack with 4 services:
+
+1. WEBSERVER (Your main application)
+2. NGINX (Web server and load balancer)
+3. PROMETHEUS (Monitoring system)
+4. GRAFANA (Beautiful dashboards)
+
+Let's break down each service:
+
+📊 SERVICE 1: WEBSERVER
+========================
+webserver:
+  build: .                    ← Build from our Dockerfile
+  ports:
+    - "8080:8080"            ← Connect port 8080 on your computer to port 8080 in container
+  volumes:
+    - ./object_dir:/app/www:ro  ← Share your files with the container (read-only)
+    - ./logs:/app/logs        ← Share log files between your computer and container
+  environment:               ← Set environment variables (like settings)
+    - SERVER_HOST=0.0.0.0
+    - SERVER_PORT=8080
+    - LOG_LEVEL=INFO
+    - RATE_LIMIT=100
+  restart: unless-stopped    ← Automatically restart if it crashes
+
+SIMPLE EXPLANATION:
+- Like setting up your main restaurant
+- Port 8080 = the main entrance
+- Volumes = sharing files between your computer and the restaurant
+- Environment = setting up the restaurant rules
+- Restart = if the restaurant closes, automatically reopen it
+
+🌐 SERVICE 2: NGINX
+====================
+nginx:
+  image: nginx:alpine         ← Use pre-built Nginx container
+  ports:
+    - "80:80"                ← Standard web port (HTTP)
+    - "443:443"              ← Secure web port (HTTPS)
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro  ← Use our custom Nginx configuration
+    - ./ssl:/etc/nginx/ssl:ro                ← Share SSL certificates
+  depends_on:
+    - webserver              ← Start after webserver is ready
+  restart: unless-stopped
+
+SIMPLE EXPLANATION:
+- Like having a professional host at your restaurant
+- Port 80/443 = the main doors people use
+- nginx.conf = the host's instructions on how to greet customers
+- depends_on = wait for the kitchen (webserver) to be ready before opening doors
+- This handles load balancing and security
+
+📈 SERVICE 3: PROMETHEUS
+=========================
+prometheus:
+  image: prom/prometheus:latest
+  ports:
+    - "9090:9090"            ← Prometheus web interface
+  volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro  ← Configuration file
+  command:                   ← Custom startup command
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+  restart: unless-stopped
+
+SIMPLE EXPLANATION:
+- Like having a security camera system that records everything
+- Port 9090 = the security office where you can view recordings
+- prometheus.yml = instructions on what to monitor
+- This collects all the metrics and statistics
+
+📊 SERVICE 4: GRAFANA
+======================
+grafana:
+  image: grafana/grafana:latest
+  ports:
+    - "3000:3000"            ← Grafana web interface
+  volumes:
+    - grafana-storage:/var/lib/grafana  ← Store dashboard data
+  environment:
+    - GF_SECURITY_ADMIN_PASSWORD=admin  ← Set admin password
+  restart: unless-stopped
+
+SIMPLE EXPLANATION:
+- Like having a beautiful TV screen showing restaurant statistics
+- Port 3000 = the dashboard room
+- grafana-storage = where to save the dashboard layouts
+- This creates beautiful charts and graphs from the data
+
+💡 HOW IT ALL WORKS TOGETHER:
+=============================
+
+1. USER VISITS YOUR WEBSITE
+   - Types your website address in browser
+   - Goes to port 80 (Nginx)
+
+2. NGINX RECEIVES THE REQUEST
+   - Acts like a professional host
+   - Decides where to send the request
+   - Forwards to your webserver (port 8080)
+
+3. WEBSERVER PROCESSES REQUEST
+   - Your Python application handles the request
+   - Serves the file or page
+   - Sends response back to Nginx
+
+4. NGINX SENDS RESPONSE TO USER
+   - Adds security headers
+   - Handles compression
+   - Sends final response to user
+
+5. MONITORING HAPPENS IN BACKGROUND
+   - Prometheus collects metrics from webserver
+   - Grafana displays beautiful dashboards
+   - You can see real-time statistics
+
+🚀 WHY USE DOCKER COMPOSE?
+==========================
+
+WITHOUT DOCKER COMPOSE:
+- Start webserver manually
+- Start Nginx manually
+- Start Prometheus manually
+- Start Grafana manually
+- Configure each one separately
+- Remember all the commands
+- Hard to share with team
+
+WITH DOCKER COMPOSE:
+- One command starts everything: docker-compose up
+- All services work together automatically
+- Easy to share with team
+- Easy to deploy anywhere
+- Professional setup
+
+🔧 HOW TO USE IT:
+=================
+
+1. START EVERYTHING:
+   docker-compose up -d
+   - -d = run in background (detached mode)
+   - Starts all 4 services
+
+2. VIEW LOGS:
+   docker-compose logs
+   - See what's happening with all services
+
+3. STOP EVERYTHING:
+   docker-compose down
+   - Stops all services cleanly
+
+4. RESTART ONE SERVICE:
+   docker-compose restart webserver
+   - Restart just the webserver
+
+🎯 WHAT YOU GET:
+================
+
+After running docker-compose up -d:
+
+- Your website: http://localhost (port 80)
+- Direct webserver: http://localhost:8080
+- Prometheus monitoring: http://localhost:9090
+- Grafana dashboards: http://localhost:3000
+
+This is a complete, professional web server setup that would cost thousands of dollars to set up manually!
+
+💼 WHY THIS IS IMPRESSIVE FOR JOBS:
+===================================
+
+1. SHOWS SYSTEM DESIGN SKILLS
+   - You understand how different components work together
+   - You can design complete solutions
+
+2. SHOWS DEVOPS KNOWLEDGE
+   - You know how to deploy applications
+   - You understand monitoring and observability
+
+3. SHOWS PROFESSIONAL PRACTICES
+   - You use industry-standard tools
+   - You think about production concerns
+
+4. SHOWS SCALABILITY AWARENESS
+   - You understand load balancing
+   - You know how to handle multiple services
+
+This makes you look like a senior developer, not just a beginner!
